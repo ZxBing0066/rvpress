@@ -1,0 +1,216 @@
+import React, { ReactNode, ComponentType, useContext } from 'react';
+
+import { PageData } from '../shared';
+import Context from './Context';
+import { inBrowser } from './utils';
+
+export interface Route {
+    path: string;
+    data: PageData;
+    component: ReactNode | null;
+}
+
+export interface Router {
+    route: Route;
+    go: (href?: string) => Promise<void>;
+    on: (listener: (route: Route) => void) => void;
+    off: () => void;
+}
+
+interface PageModule {
+    __pageData: string;
+    default: ComponentType;
+}
+
+const fakeHost = `http://a.com`;
+
+const getDefaultRoute = (): Route => ({
+    path: '/',
+    component: null,
+    // this will be set upon initial page load, which is before
+    // the app is mounted, so it's guaranteed to be available in
+    // components. We just need enough data for 404 pages to render.
+    data: { frontmatter: {} } as any
+});
+
+export function createRouter(
+    loadPageModule: (path: string) => PageModule | Promise<PageModule>,
+    fallbackComponent?: ReactNode
+): Router {
+    const route = getDefaultRoute();
+    let callback: ((route: Route) => void) | void;
+
+    function go(href: string = inBrowser ? location.href : '/') {
+        // ensure correct deep link so page refresh lands on correct files.
+        const url = new URL(href, fakeHost);
+        if (!url.pathname.endsWith('/') && !url.pathname.endsWith('.html')) {
+            url.pathname += '.html';
+            href = url.pathname + url.search + url.hash;
+        }
+        if (inBrowser) {
+            // save scroll position before changing url
+            history.replaceState({ scrollPosition: window.scrollY }, document.title);
+            history.pushState(null, '', href);
+        }
+        return loadPage(href);
+    }
+
+    let latestPendingPath: string | null = null;
+
+    async function loadPage(href: string, scrollPosition = 0) {
+        const targetLoc = new URL(href, fakeHost);
+        const pendingPath = (latestPendingPath = targetLoc.pathname);
+        try {
+            let page = loadPageModule(pendingPath);
+            // only await if it returns a Promise - this allows sync resolution
+            // on initial render in SSR.
+            if ('then' in page && typeof page.then === 'function') {
+                page = await page;
+            }
+            if (latestPendingPath === pendingPath) {
+                latestPendingPath = null;
+
+                const { default: comp, __pageData } = page as PageModule;
+                if (!comp) {
+                    throw new Error(`Invalid route component: ${comp}`);
+                }
+
+                route.path = pendingPath;
+                route.component = React.createElement('div', { dangerouslySetInnerHTML: { __html: (comp as any)() } });
+                route.data = JSON.parse(__pageData);
+                callback?.(route);
+
+                if (inBrowser) {
+                    if (targetLoc.hash && !scrollPosition) {
+                        let target: HTMLElement | null = null;
+                        try {
+                            target = document.querySelector(decodeURIComponent(targetLoc.hash)) as HTMLElement;
+                        } catch (e) {
+                            console.warn(e);
+                        }
+                        if (target) {
+                            scrollTo(target, targetLoc.hash);
+                            return;
+                        }
+                    }
+                    window.scrollTo(0, scrollPosition);
+                }
+            }
+        } catch (err: any) {
+            if (!err.message.match(/fetch/)) {
+                console.error(err);
+            }
+            if (latestPendingPath === pendingPath) {
+                latestPendingPath = null;
+                route.path = pendingPath;
+                route.component = fallbackComponent ? fallbackComponent : null;
+                route.data = { frontmatter: {} } as any;
+                callback?.(route);
+            }
+        }
+    }
+
+    if (inBrowser) {
+        window.addEventListener(
+            'click',
+            e => {
+                const link = (e.target as Element).closest('a');
+                if (link) {
+                    const { href, protocol, hostname, pathname, hash, target, search } = link;
+                    const currentUrl = window.location;
+                    const extMatch = pathname.match(/\.\w+$/);
+                    // only intercept inbound links
+                    if (
+                        !e.ctrlKey &&
+                        !e.shiftKey &&
+                        !e.altKey &&
+                        !e.metaKey &&
+                        target !== `_blank` &&
+                        protocol === currentUrl.protocol &&
+                        hostname === currentUrl.hostname &&
+                        !(extMatch && extMatch[0] !== '.html')
+                    ) {
+                        e.preventDefault();
+                        if (pathname === currentUrl.pathname) {
+                            // scroll between hash anchors in the same page
+                            if (search !== currentUrl.search) {
+                                go(href);
+                            } else if (hash && hash !== currentUrl.hash) {
+                                history.pushState(null, '', hash);
+                                // still emit the event so we can listen to it in themes
+                                window.dispatchEvent(new Event('hashchange'));
+                                // use smooth scroll when clicking on header anchor links
+                                scrollTo(link, hash, link.classList.contains('header-anchor'));
+                            }
+                        } else {
+                            go(href);
+                        }
+                    }
+                }
+            },
+            { capture: true }
+        );
+
+        window.addEventListener('popstate', e => {
+            loadPage(location.href, (e.state && e.state.scrollPosition) || 0);
+        });
+
+        window.addEventListener('hashchange', e => {
+            e.preventDefault();
+        });
+    }
+
+    const on = (listener: (route: Route) => void) => {
+        callback = listener;
+    };
+    const off = () => {
+        callback = undefined;
+    };
+
+    return {
+        route,
+        go,
+        on,
+        off
+    };
+}
+
+function scrollTo(el: HTMLElement, hash: string, smooth = false) {
+    let target: Element | null = null;
+
+    try {
+        target = el.classList.contains('.header-anchor') ? el : document.querySelector(decodeURIComponent(hash));
+    } catch (e) {
+        console.warn(e);
+    }
+
+    if (target) {
+        const targetTop = (target as HTMLElement).offsetTop;
+        // only smooth scroll if distance is smaller than screen height.
+        if (!smooth || Math.abs(targetTop - window.scrollY) > window.innerHeight) {
+            window.scrollTo(0, targetTop);
+        } else {
+            window.scrollTo({
+                left: 0,
+                top: targetTop,
+                behavior: 'smooth'
+            });
+        }
+    }
+}
+
+export function useRouter() {
+    const { router } = useContext(Context);
+    if (!router) {
+        throw new Error('useRouter() is called without provider.');
+    }
+    return router;
+}
+
+export function useRoute(): Route {
+    const { route } = useContext(Context);
+    if (!route) {
+        throw new Error('useRoute() is called without provider.');
+    }
+    return route;
+}

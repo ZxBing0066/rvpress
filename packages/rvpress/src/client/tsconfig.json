@@ -1,0 +1,16 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": ".",
+        "outDir": "../../dist/client",
+        "target": "esnext",
+        "module": "esnext",
+        "lib": ["ESNext", "DOM"],
+        "types": ["vite/client"],
+        "jsx": "react",
+        "composite": true
+    },
+    "references": [{ "path": "../shared" }],
+    "include": ["."]
+}

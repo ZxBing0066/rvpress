@@ -1,0 +1,19 @@
+.edit-link {
+    :global {
+        .link {
+            display: inline-block;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--c-text-light);
+        }
+
+        .link:hover {
+            text-decoration: none;
+            color: var(--c-brand);
+        }
+
+        .icon {
+            margin-left: 4px;
+        }
+    }
+}

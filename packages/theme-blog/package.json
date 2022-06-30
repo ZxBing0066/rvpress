@@ -1,0 +1,32 @@
+{
+  "name": "@rvpress/theme-blog",
+  "version": "0.1.2",
+  "description": "A theme of blog for rvpress",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p src && node scripts/copy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZxBing0066/rvpress.git"
+  },
+  "keywords": [
+    "rvpress",
+    "template",
+    "blog"
+  ],
+  "author": "ZxBing0066",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZxBing0066/rvpress/issues"
+  },
+  "homepage": "https://github.com/ZxBing0066/rvpress#readme",
+  "devDependencies": {
+    "fs-extra": "^10.0.0",
+    "globby": "^11.1.0",
+    "rvpress": "workspace:*"
+  },
+  "peerDependencies": {
+    "rvpress": "workspace:*"
+  }
+}

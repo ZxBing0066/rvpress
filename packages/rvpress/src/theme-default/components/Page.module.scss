@@ -1,0 +1,37 @@
+.page {
+    :global {
+        padding-top: var(--header-height);
+        .page-container {
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+            max-width: 60rem;
+        }
+
+        .content {
+            padding-bottom: 1.5rem;
+        }
+    }
+}
+
+@media (min-width: 720px) {
+    .page {
+        margin-left: 16.4rem;
+    }
+}
+
+@media (min-width: 960px) {
+    .page {
+        margin-left: 20rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .page {
+        :global {
+            .content {
+                /* fix carbon ads display */
+                clear: both;
+            }
+        }
+    }
+}

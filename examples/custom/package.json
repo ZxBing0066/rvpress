@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "rvpress-custom",
+  "scripts": {
+    "dev": "rvpress dev .",
+    "build": "rvpress build ."
+  },
+  "devDependencies": {
+    "rvpress": "workspace:*"
+  }
+}

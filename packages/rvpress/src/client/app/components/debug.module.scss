@@ -1,0 +1,60 @@
+.debug:global(.debug) {
+    box-sizing: border-box;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 8px;
+    bottom: 8px;
+    z-index: 9999;
+    border-radius: 4px;
+    width: 74px;
+    height: 32px;
+    color: #eeeeee;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.85);
+    transition: all 0.15s ease;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    &:global(.open) {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        margin-top: 0;
+        border-radius: 0;
+        padding: 0 0;
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+    }
+    :global(.title) {
+        margin: 0;
+        padding: 6px 16px 6px;
+        line-height: 20px;
+        font-size: 13px;
+    }
+
+    :global(.block) {
+        margin: 2px 0 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        padding: 8px 16px;
+        font-family: Hack, monospace;
+        font-size: 13px;
+        flex: 1;
+        overflow: auto;
+    }
+
+    :global(.block + .block) {
+        margin-top: 8px;
+    }
+}
+
+@media (min-width: 512px) {
+    .debug.open {
+        width: 512px;
+    }
+}

@@ -1,0 +1,24 @@
+.last-updated {
+    :global {
+        display: inline-block;
+        margin: 0;
+        line-height: 1.4;
+        font-size: 0.9rem;
+        color: var(--c-text-light);
+        .prefix {
+            display: inline-block;
+            font-weight: 500;
+        }
+        .datetime {
+            display: inline-block;
+            margin-left: 6px;
+            font-weight: 400;
+        }
+    }
+}
+
+@media (min-width: 960px) {
+    .last-updated {
+        font-size: 1rem;
+    }
+}

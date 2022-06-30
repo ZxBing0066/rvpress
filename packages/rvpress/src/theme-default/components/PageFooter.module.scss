@@ -1,0 +1,23 @@
+.page-footer {
+    :global {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        overflow: auto;
+        .updated {
+            padding-top: 4px;
+        }
+    }
+}
+
+@media (min-width: 960px) {
+    .page-footer {
+        :global {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .updated {
+                padding-top: 0;
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "private": "true",
+  "author": "ZxBing0066",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "husky install",
+    "dev:example-blog": "cd examples/blog && npm run dev"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.10.1",
+    "@typescript-eslint/parser": "^5.10.1",
+    "chokidar": "^3.5.3",
+    "commitizen": "^4.2.4",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "git-cz": "^4.8.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.2",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.5"
+  }
+}

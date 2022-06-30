@@ -1,0 +1,18 @@
+.nav-links {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--c-divider);
+    :global {
+        .item + .item {
+            padding-left: 24px;
+        }
+    }
+}
+
+@media (min-width: 720px) {
+    .nav-links {
+        display: flex;
+        padding: 6px 0 0;
+        align-items: center;
+        border-bottom: 0;
+    }
+}

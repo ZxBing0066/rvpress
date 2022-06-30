@@ -1,0 +1,15 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": ".",
+        "outDir": "../../dist/node",
+        "target": "es2019",
+        "module": "commonjs",
+        "types": ["node"],
+        "sourceMap": true,
+        "emitDeclarationOnly": true
+    },
+    "references": [{ "path": "../shared" }],
+    "include": ["."]
+}

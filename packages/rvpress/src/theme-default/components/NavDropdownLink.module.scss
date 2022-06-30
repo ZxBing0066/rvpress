@@ -1,0 +1,87 @@
+.nav-dropdown-link {
+    :global {
+        position: relative;
+        height: 36px;
+        overflow: hidden;
+        cursor: pointer;
+
+        .button {
+            display: block;
+            border: 0;
+            padding: 0 1.5rem;
+            width: 100%;
+            text-align: left;
+            line-height: 36px;
+            font-family: var(--font-family-base);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--c-text);
+            white-space: nowrap;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        .button:focus {
+            outline: 0;
+        }
+
+        .button-arrow {
+            display: inline-block;
+            margin-top: -1px;
+            margin-left: 8px;
+            border-top: 6px solid #ccc;
+            border-right: 4px solid transparent;
+            border-bottom: 0;
+            border-left: 4px solid transparent;
+            vertical-align: middle;
+        }
+
+        .button-arrow.right {
+            transform: rotate(-90deg);
+        }
+
+        .dialog {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+    }
+    &:global(.open) {
+        height: auto;
+    }
+}
+
+@media (min-width: 720px) {
+    .nav-dropdown-link {
+        :global {
+            height: auto;
+            overflow: visible;
+            .button {
+                border-bottom: 2px solid transparent;
+                padding: 0;
+                line-height: 24px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .button-arrow.right {
+                transform: rotate(0);
+            }
+            .dialog {
+                display: none;
+                position: absolute;
+                top: 26px;
+                right: -8px;
+                border-radius: 6px;
+                padding: 12px 0;
+                min-width: 128px;
+                background-color: var(--c-bg);
+                box-shadow: var(--shadow-3);
+            }
+        }
+    }
+
+    .nav-dropdown-link:hover :global(.dialog) {
+        display: block;
+    }
+}

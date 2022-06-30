@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "rvpress-blog",
+  "scripts": {
+    "dev": "rvpress dev .",
+    "build": "rvpress build ."
+  },
+  "devDependencies": {
+    "@rvpress/theme-blog": "workspace:*",
+    "rvpress": "workspace:*"
+  }
+}
