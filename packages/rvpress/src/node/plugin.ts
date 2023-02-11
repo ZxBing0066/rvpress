@@ -8,6 +8,7 @@ import { createMarkdownToReactRenderFn } from './markdownToReact';
 import { DIST_CLIENT_PATH, APP_PATH, SITE_DATA_REQUEST_PATH, SITE_PAGE_LIST_REQUEST_PATH } from './alias';
 import { slash } from './utils/slash';
 import { staticDataPlugin } from './staticDataPlugin';
+import { URL } from 'url';
 
 const hashRE = /\.(\w+)\.js$/;
 const staticInjectMarkerRE = /\b(const _hoisted_\d+ = \/\*(?:#|@)__PURE__\*\/\s*createStaticVNode)\("(.*)", (\d+)\)/g;
@@ -149,11 +150,12 @@ export function createRVPressPlugin(
             // serve our index.html after vite history fallback
             return () => {
                 server.middlewares.use(async (req, res, next) => {
-                    if (req.url?.endsWith('.html')) {
+                    const url = new URL(req.url!, `http://${req.headers.host}`);
+                    if (url.pathname?.endsWith('.html')) {
                         res.statusCode = 200;
                         res.end(
                             await server.transformIndexHtml(
-                                req.url,
+                                req.url!,
                                 `
 <!DOCTYPE html>
 <html>
