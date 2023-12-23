@@ -1,6 +1,6 @@
 {
   "name": "rvpress",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "React & Vite powered static site generator",
   "bin": {
     "rvpress": "./bin/rvpress.js"
